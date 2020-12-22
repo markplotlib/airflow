@@ -4,8 +4,7 @@ from airflow.utils.decorators import apply_defaults
 
 class LoadFactOperator(BaseOperator):
     facts_sql_template = """
-    DROP TABLE IF EXISTS {destination_table};
-    CREATE TABLE {destination_table} AS
+    CREATE TABLE IF NOT EXISTS {destination_table} AS
     {fact_table_query}
     """
 
