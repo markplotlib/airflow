@@ -35,6 +35,14 @@ stage_songs_to_redshift = StageToRedshiftOperator(
 load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     dag=dag
+    # PSEUDOCODE
+    # a completely finalized SELECT statement
+    # SqlQueries.songplay_table_insert
+    # TODO: pass it into a param of LoadFactOperator
+    #
+    # redshift_conn_id="redshift",
+    # origin_table="staging_events",    ???
+    # destination_table="events",       ???
 )
 
 load_user_dimension_table = LoadDimensionOperator(
