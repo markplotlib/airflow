@@ -1,3 +1,10 @@
+# notes: StageToRedshiftOperator
+#   load JSON files from S3 to Redshift; create and run SQL COPY statement
+#   parameters specify where in S3 the file is loaded, and the target table
+#   parameters to distinguish between JSON file
+#   stage operator also contains templated field that allows it to load
+#   timestamped files from S3 based on the execution time and run backfills.
+
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
@@ -19,8 +26,3 @@ class StageToRedshiftOperator(BaseOperator):
 
     def execute(self, context):
         self.log.info('StageToRedshiftOperator not implemented yet')
-
-
-
-
-
