@@ -35,3 +35,18 @@ class StageToRedshiftOperator(BaseOperator):
 
     def execute(self, context):
         self.log.info('StageToRedshiftOperator not implemented yet')
+        # TODO: fill in AWS Hook with AWS credentials
+            # instantiate AwsHook() object
+            # assign credentials using AwsHook.get_credentials()
+            # instantiate PostgresHook() object with postgres_conn_id=redshift_conn_id
+
+        self.log.info('Clearing data from destination Redshift table')
+        # TODO: run SQL DELETE command
+
+        self.log.info('Copying data from S3 to Redshift')
+        # TODO: run SQL COPY command
+            # set rendered_key from context
+            # set s3_path, from s3_bucket and from rendered_key
+            # set formatted_sql, using S3ToRedshiftOperator.copy_sql attribute
+                # 1 line per each param
+            # run formatted_sql
