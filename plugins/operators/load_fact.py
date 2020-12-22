@@ -19,10 +19,26 @@ class LoadFactOperator(BaseOperator):
                  destination_table=""
                  *args, **kwargs):
 
+        # this super(<SameClass>, self) call below is equivalent to
+        # the parameterless super() call, giving access to methods
+        # in a superclass from the subclass that inherits from it.
         super(LoadFactOperator, self).__init__(*args, **kwargs)
-        # Map params here
-        # Example:
-        # self.conn_id = conn_id
+        self.redshift_conn_id=redshift_conn_id
+        self.origin_table=origin_table
+        self.destination_table=destination_table
+        self.songplay_table_insert=songplay_table_insert
+
 
     def execute(self, context):
-        self.log.info('LoadFactOperator not implemented yet')
+        # Fetch the redshift hook
+        redshift = PostgresHook(postgres_conn_id=self.postgres_conn_id)
+
+        # Format the `facts_sql_template`
+        formatted_facts_sql = LoadFactOperator.facts_sql_template.format(
+            destination_table=self.destination_table,
+            origin_table=self.origin_table,
+            songplay_table_insert=self.songplay_table_insert
+        )
+
+        # run the query against redshift
+        redshift.run(formatted_facts_sql)
