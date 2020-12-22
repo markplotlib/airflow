@@ -3,14 +3,20 @@ from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
 class LoadFactOperator(BaseOperator):
+    facts_sql_template = """
+    DROP TABLE IF EXISTS {destination_table};
+    CREATE TABLE {destination_table} AS
+    {songplay_table_insert}
+    """
 
     ui_color = '#F98866'
 
     @apply_defaults
     def __init__(self,
-                 # Define your operators params (with defaults) here
-                 # Example:
-                 # conn_id = your-connection-name
+                 redshift_conn_id="",
+                 songplay_table_insert="",
+                 origin_table="",
+                 destination_table=""
                  *args, **kwargs):
 
         super(LoadFactOperator, self).__init__(*args, **kwargs)
