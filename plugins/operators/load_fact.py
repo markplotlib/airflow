@@ -6,7 +6,7 @@ class LoadFactOperator(BaseOperator):
     facts_sql_template = """
     DROP TABLE IF EXISTS {destination_table};
     CREATE TABLE {destination_table} AS
-    {songplay_table_insert}
+    {fact_table_query}
     """
 
     ui_color = '#F98866'
@@ -14,8 +14,7 @@ class LoadFactOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  redshift_conn_id="",
-                 songplay_table_insert="",
-                 origin_table="",
+                 fact_table_query="",
                  destination_table=""
                  *args, **kwargs):
 
@@ -24,9 +23,8 @@ class LoadFactOperator(BaseOperator):
         # in a superclass from the subclass that inherits from it.
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id=redshift_conn_id
-        self.origin_table=origin_table
         self.destination_table=destination_table
-        self.songplay_table_insert=songplay_table_insert
+        self.fact_table_query=fact_table_query
 
 
     def execute(self, context):
@@ -36,8 +34,7 @@ class LoadFactOperator(BaseOperator):
         # Format the `facts_sql_template`
         formatted_facts_sql = LoadFactOperator.facts_sql_template.format(
             destination_table=self.destination_table,
-            origin_table=self.origin_table,
-            songplay_table_insert=self.songplay_table_insert
+            fact_table_query=self.fact_table_query
         )
 
         # run the query against redshift

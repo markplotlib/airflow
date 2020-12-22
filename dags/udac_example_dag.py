@@ -37,8 +37,7 @@ load_songplays_table = LoadFactOperator(
     dag=dag
     # ,
     # redshift_conn_id="redshift",
-    # songplay_table_insert=SqlQueries.songplay_table_insert,
-    # origin_table="staging_events",
+    # fact_table_query=SqlQueries.songplay_table_insert,
     # destination_table="songplays"
 )
 
