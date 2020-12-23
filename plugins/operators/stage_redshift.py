@@ -13,12 +13,12 @@ class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
     template_fields = ('s3_key',)
     copy_sql = """
-        COPY {}
-        FROM '{}'
-        ACCESS_KEY_ID '{}'
-        SECRET_ACCESS_KEY '{}'
-        IGNOREHEADER {}
-        DELIMITER '{}'
+        COPY {table}
+        FROM '{s3_path}'
+        ACCESS_KEY_ID '{access_key_id}'
+        SECRET_ACCESS_KEY '{secret_access_key}'
+        IGNOREHEADER {ignore_header}
+        DELIMITER '{delimiter}'
     """
 
     @apply_defaults
@@ -45,8 +45,14 @@ class StageToRedshiftOperator(BaseOperator):
 
         self.log.info('Copying data from S3 to Redshift')
         # TODO: run SQL COPY command
-            # set rendered_key from context
-            # set s3_path, from s3_bucket and from rendered_key
-            # set formatted_sql, using S3ToRedshiftOperator.copy_sql attribute
-                # 1 line per each param
-            # run formatted_sql
+            # TODO: set rendered_key from context
+            # TODO: set s3_path, from s3_bucket and from rendered_key
+
+        formatted_sql = StageToRedshiftOperator.copy_sql.format(
+            table=self.table,
+            # s3_path=,
+            # access_key_id=,
+            # secret_access_key=,
+            ignore_header=self.ignore_header,
+            delimiter=self.delimiter
+        )
