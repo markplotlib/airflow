@@ -18,6 +18,7 @@ class DataQualityOperator(BaseOperator):
         # Example:
         # self.conn_id = conn_id
         self.table = table
+        self.column = column
         self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
@@ -29,6 +30,15 @@ class DataQualityOperator(BaseOperator):
         if num_records < 1:
             raise ValueError(f"Data quality check failed. {self.table} contained 0 rows")
         logging.info(f"Data quality on table {self.table} check passed with {records[0][0]} records")
+
+        null_records = redshift_hook.get_records(f"""
+            SELECT COUNT(*) FROM {self.table}
+            WHERE {self.column} IS NULL
+        """)
+        num_null_records = null_records[0][0]
+        if num_null_records > 0:
+            raise ValueError(f"""Data quality check failed. {self.table} contained
+                            row(s) of NULL values in {self.column}""")
 
 
 ## Data Quality Operators
