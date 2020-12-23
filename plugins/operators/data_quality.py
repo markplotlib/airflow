@@ -17,10 +17,18 @@ class DataQualityOperator(BaseOperator):
         # Map params here
         # Example:
         # self.conn_id = conn_id
+        self.table = table
+        self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
-        self.log.info('DataQualityOperator not implemented yet')
-        
+        redshift_hook = PostgresHook(self.redshift_conn_id)
+        records = redshift_hook.get_records(f'SELECT COUNT(*) FROM {self.table}')
+        if len(records) < 1 or len(records[0]) < 1:
+            raise ValueError(f"Data quality check failed. {self.table} returned no results")
+        num_records = records[0][0]
+        if num_records < 1:
+            raise ValueError(f"Data quality check failed. {self.table} contained 0 rows")
+        logging.info(f"Data quality on table {self.table} check passed with {records[0][0]} records")
 
 
 ## Data Quality Operators
@@ -32,4 +40,7 @@ class DataQualityOperator(BaseOperator):
 # For each test, the test result and expected result needs to be checked and
 # if there is no match, the operator should raise an exception and the task should retry and fail eventually.
 #
-# For example one test could be a SQL statement that checks if certain column contains NULL values by counting all the rows that have NULL in the column. We do not want to have any NULLs so expected result would be 0 and the test would compare the SQL statement's outcome to the expected result.
+# For example one test could be a SQL statement that checks if certain column
+# contains NULL values by counting all the rows that have NULL in the column.
+# We do not want to have any NULLs so expected result would be 0 and the test
+# would compare the SQL statement's outcome to the expected result.
