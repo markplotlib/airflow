@@ -27,12 +27,17 @@ class StageToRedshiftOperator(BaseOperator):
                  # Define your operators params (with defaults) here
                  redshift_conn_id="",
                  aws_credentials_id="",
+                 #
+                 s3_bucket="",
+                 s3_key="",
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         # Map params here
         self.redshift_conn_id = redshift_conn_id
         self.aws_credentials_id = aws_credentials_id
+        self.s3_bucket = s3_bucket
+        self.s3_key = s3_key
 
 
     def execute(self, context):
@@ -48,16 +53,15 @@ class StageToRedshiftOperator(BaseOperator):
         # TODO: run SQL DELETE command
 
         self.log.info('Copying data from S3 to Redshift')
-        # TODO: run SQL COPY command
-            # TODO: set rendered_key from context
-            # TODO: set s3_path, from s3_bucket and from rendered_key
+        rendered_key = self.s3_key.format(**context)
+        s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
 
         formatted_sql = StageToRedshiftOperator.copy_sql.format(
             table=self.table,
-            # s3_path=,
+            s3_path=s3_path,
             access_key_id=credentials.access_key,
             secret_access_key=credentials.secret_key,
-            ignore_header=self.ignore_header,
-            delimiter=self.delimiter
+            # ignore_header=self.ignore_header,
+            # delimiter=self.delimiter
         )
         redshift.run(formatted_sql)
