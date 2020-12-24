@@ -30,6 +30,8 @@ class StageToRedshiftOperator(BaseOperator):
                  #
                  s3_bucket="",
                  s3_key="",
+                 delimiter=",",
+                 ignore_headers=1,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -38,6 +40,8 @@ class StageToRedshiftOperator(BaseOperator):
         self.aws_credentials_id = aws_credentials_id
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
+        self.delimiter = delimiter
+        self.ignore_headers = ignore_headers
 
 
     def execute(self, context):
@@ -61,7 +65,7 @@ class StageToRedshiftOperator(BaseOperator):
             s3_path=s3_path,
             access_key_id=credentials.access_key,
             secret_access_key=credentials.secret_key,
-            # ignore_header=self.ignore_header,
-            # delimiter=self.delimiter
+            ignore_header=self.ignore_header,
+            delimiter=self.delimiter
         )
         redshift.run(formatted_sql)
