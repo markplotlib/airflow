@@ -26,21 +26,23 @@ class StageToRedshiftOperator(BaseOperator):
     def __init__(self,
                  # Define your operators params (with defaults) here
                  redshift_conn_id="",
+                 aws_credentials_id="",
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         # Map params here
         self.redshift_conn_id = redshift_conn_id
+        self.aws_credentials_id = aws_credentials_id
 
 
     def execute(self, context):
-        self.log.info('StageToRedshiftOperator not implemented yet')
-        # TODO: fill in AWS Hook with AWS credentials
-            # instantiate AwsHook() object
-            # assign credentials using AwsHook.get_credentials()
+        # instantiate AwsHook() object
+        aws_hook = AwsHook(self.aws_credentials_id)
+        # assign credentials
+        credentials = aws_hook.get_credentials()
 
-            # instantiate PostgresHook() object with postgres_conn_id=redshift_conn_id
-            redshift = PostgresHook(postgres_conn_id=redshift_conn_id)
+        # instantiate PostgresHook() object with postgres_conn_id=redshift_conn_id
+        redshift = PostgresHook(postgres_conn_id=redshift_conn_id)
 
         self.log.info('Clearing data from destination Redshift table')
         # TODO: run SQL DELETE command
@@ -53,8 +55,9 @@ class StageToRedshiftOperator(BaseOperator):
         formatted_sql = StageToRedshiftOperator.copy_sql.format(
             table=self.table,
             # s3_path=,
-            # access_key_id=,
-            # secret_access_key=,
+            access_key_id=credentials.access_key,
+            secret_access_key=credentials.secret_key,
             ignore_header=self.ignore_header,
             delimiter=self.delimiter
         )
+        redshift.run(formatted_sql)
