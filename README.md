@@ -18,4 +18,4 @@ to catch any discrepancies in the datasets.
 ### Apache Airflow 
 In Airflow, I create custom operators to perform tasks that stage the data, fill the data warehouse, and run data quality checks.
 
-<!-- DAG task flow diagram -->
+<img src="./img/taskflow.png" alt="flow of tasks" width="750" title="flow of tasks" />
