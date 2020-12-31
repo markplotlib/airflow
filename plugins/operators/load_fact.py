@@ -14,7 +14,7 @@ class LoadFactOperator(BaseOperator):
     def __init__(self,
                  redshift_conn_id="",
                  fact_table_query="",
-                 destination_table=""
+                 destination_table="",
                  *args, **kwargs):
 
         # this super(<SameClass>, self) call below is equivalent to

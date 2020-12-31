@@ -15,7 +15,7 @@ class LoadDimensionOperator(BaseOperator):
     def __init__(self,
                  redshift_conn_id="",
                  dim_table_query="",
-                 destination_table=""
+                 destination_table="",
                  *args, **kwargs):
 
         # this super(<SameClass>, self) call below is equivalent to
