@@ -88,23 +88,23 @@ end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 # Airflow dependencies
 # tasks that fan out
-Begin_execution >> Stage_events
-Begin_execution >> Stage_songs
+start_operator >> stage_events_to_redshift
+start_operator >> stage_songs_to_redshift
 
 # tasks that funnel in
-Load_songplays_fact_table << Stage_events
-Load_songplays_fact_table << Stage_songs
+load_songplays_table << stage_events_to_redshift
+load_songplays_table << stage_songs_to_redshift
 
 # fan out: 1 to 4
-Load_songplays_fact_table >> Load_song_dim_table
-Load_songplays_fact_table >> Load_user_dim_table
-Load_songplays_fact_table >> Load_artist_dim_table
-Load_songplays_fact_table >> Load_time_dim_table
+load_songplays_table >> load_song_dimension_table
+load_songplays_table >> load_user_dimension_table
+load_songplays_table >> load_artist_dimension_table
+load_songplays_table >> load_time_dimension_table
 
 # funnel in: 4 to 1
-Run_data_quality_checks << Load_song_dim_table
-Run_data_quality_checks << Load_user_dim_table
-Run_data_quality_checks << Load_artist_dim_table
-Run_data_quality_checks << Load_time_dim_table
+run_quality_checks << load_song_dimension_table
+run_quality_checks << load_user_dimension_table
+run_quality_checks << load_artist_dimension_table
+run_quality_checks << load_time_dimension_table
 
-Run_data_quality_checks >> Stop_execution
+run_quality_checks >> end_operator
