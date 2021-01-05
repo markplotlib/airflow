@@ -5,7 +5,8 @@
 #   The stage operator also contains a templated field that allows it to load
 #   timestamped files from S3 based on the execution time and run backfills.
 
-from airflow.contrib.hooks.aws_hook import AwsHook
+# from airflow.contrib.hooks.aws_hook import AwsHook
+from airflow.hooks.S3_hook import S3Hook
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
@@ -46,10 +47,10 @@ class StageToRedshiftOperator(BaseOperator):
 
 
     def execute(self, context):
-        # instantiate AwsHook() object
-        aws_hook = AwsHook(self.aws_credentials_id)
+        # instantiate S3Hook() object (instead of AwsHook)
+        s3hook = S3Hook(self.aws_credentials_id)
         # assign credentials
-        credentials = aws_hook.get_credentials()
+        credentials = s3hook.get_credentials()
 
         # instantiate PostgresHook() object with postgres_conn_id=redshift_conn_id
         redshift = PostgresHook(postgres_conn_id=redshift_conn_id)
