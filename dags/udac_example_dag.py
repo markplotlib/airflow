@@ -1,3 +1,6 @@
+# remove __pycache__
+# find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+
 from datetime import datetime, timedelta
 import os
 from airflow import DAG

@@ -28,7 +28,7 @@ class StageToRedshiftOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  redshift_conn_id="",
-                 aws_credentials_id="",
+                 aws_conn_id="",
                  table="",
                  s3_bucket="",
                  s3_key="",
@@ -43,17 +43,17 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_key = s3_key
         self.delimiter = delimiter
         self.ignore_headers = ignore_headers
-        self.aws_credentials_id = aws_credentials_id
+        self.aws_conn_id = aws_conn_id
 
 
     def execute(self, context):
         # instantiate AwsHook() object
-        aws_hook = AwsHook(self.aws_credentials_id)
+        aws_hook = AwsHook(self.aws_conn_id)
         # assign credentials
         credentials = aws_hook.get_credentials()
 
         # instantiate S3Hook() object (instead of AwsHook)
-        # s3hook = S3Hook(self.aws_credentials_id)
+        # s3hook = S3Hook(self.aws_conn_id)
         # assign credentials
         # credentials = s3hook.get_credentials()
 
