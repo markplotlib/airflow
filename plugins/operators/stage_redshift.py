@@ -33,7 +33,7 @@ class StageToRedshiftOperator(BaseOperator):
                  s3_bucket="",
                  s3_key="",
                  delimiter=",",
-                 ignore_headers=1,
+                 ignore_header=1,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -42,7 +42,7 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.delimiter = delimiter
-        self.ignore_headers = ignore_headers
+        self.ignore_header = ignore_header
         self.aws_conn_id = aws_conn_id
 
 
