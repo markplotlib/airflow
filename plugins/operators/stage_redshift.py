@@ -57,7 +57,8 @@ class StageToRedshiftOperator(BaseOperator):
         # assign credentials
         # credentials = s3hook.get_credentials()
 
-        # instantiate PostgresHook() object with postgres_conn_id=redshift_conn_id
+        # instantiate PostgresHook() object, passing redshift_conn_id
+                                            # into postgres_conn_id parameter
         redshift = PostgresHook(postgres_conn_id=redshift_conn_id)
 
         self.log.info('Clearing data from destination Redshift table')
