@@ -6,7 +6,6 @@
 #   timestamped files from S3 based on the execution time and run backfills.
 
 from airflow.contrib.hooks.aws_hook import AwsHook
-# from airflow.hooks.S3_hook import S3Hook
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
@@ -46,11 +45,6 @@ class StageToRedshiftOperator(BaseOperator):
         aws_hook = AwsHook(self.aws_conn_id)
         # assign credentials
         credentials = aws_hook.get_credentials()
-
-        # instantiate S3Hook() object (instead of AwsHook)
-        # s3hook = S3Hook(self.aws_conn_id)
-        # assign credentials
-        # credentials = s3hook.get_credentials()
 
         # instantiate PostgresHook() object, passing redshift_conn_id
                                             # into postgres_conn_id parameter
