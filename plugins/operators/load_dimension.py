@@ -39,6 +39,7 @@ class LoadDimensionOperator(BaseOperator):
             CREATE TABLE {destination_table} AS
             {dim_table_query}
             """
+            self.log.info("Deleting records from existing Redshift table")
 
         # Format the SQL template
         formatted_sql = LoadDimensionOperator.sql_template.format(
@@ -48,3 +49,5 @@ class LoadDimensionOperator(BaseOperator):
 
         # run the query against redshift
         redshift.run(formatted_sql)
+
+        self.log.info("Loading dimension table")

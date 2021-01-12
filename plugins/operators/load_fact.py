@@ -18,8 +18,8 @@ class LoadFactOperator(BaseOperator):
                  *args, **kwargs):
 
         # this super(<SameClass>, self) call below is equivalent to
-        # the parameterless super() call, giving access to methods
-        # in a superclass from the subclass that inherits from it.
+        # the parameterless super() call, giving access to
+        # methods in a superclass to the inheriting subclass.
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id=redshift_conn_id
         self.destination_table=destination_table
@@ -30,7 +30,7 @@ class LoadFactOperator(BaseOperator):
         # Fetch the redshift hook
         redshift = PostgresHook(postgres_conn_id=self.postgres_conn_id)
 
-        # Format the `facts_sql_template`
+        # Format the SQL template
         formatted_facts_sql = LoadFactOperator.facts_sql_template.format(
             destination_table=self.destination_table,
             fact_table_query=self.fact_table_query
@@ -38,3 +38,5 @@ class LoadFactOperator(BaseOperator):
 
         # run the query against redshift
         redshift.run(formatted_facts_sql)
+
+        self.log.info("Loading fact table")
