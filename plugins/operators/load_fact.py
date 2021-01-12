@@ -22,13 +22,14 @@ class LoadFactOperator(BaseOperator):
         # methods in a superclass to the inheriting subclass.
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id=redshift_conn_id
-        self.destination_table=destination_table
         self.fact_table_query=fact_table_query
+        self.destination_table=destination_table
 
 
     def execute(self, context):
-        # Fetch the redshift hook
-        redshift = PostgresHook(postgres_conn_id=self.postgres_conn_id)
+        # instantiate PostgresHook() object, passing self.redshift_conn_id
+                                            # into postgres_conn_id parameter
+        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
         # Format the SQL template
         formatted_facts_sql = LoadFactOperator.facts_sql_template.format(
