@@ -36,8 +36,8 @@ class LoadDimensionOperator(BaseOperator):
             """
         else:
             sql_template = """
-            DROP TABLE IF EXISTS {destination_table};
-            CREATE TABLE {destination_table} AS
+            TRUNCATE TABLE {destination_table};
+            INSERT INTO TABLE {destination_table} AS
             {dim_table_query}
             """
             self.log.info("Deleting records from existing Redshift table")
