@@ -8,38 +8,36 @@ class DataQualityOperator(BaseOperator):
 
     @apply_defaults
     def __init__(self,
-                 table="",
+                 table_names=[],
                  column="",
+                 quality_checks=[],
                  redshift_conn_id="",
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
-        self.table = table
+        self.table_names = table_names
         self.column = column
         self.redshift_conn_id = redshift_conn_id
+        self.quality_checks: list = quality_checks
+
 
     def execute(self, context):
         # Fetch the redshift hook
-        redshift_hook = PostgresHook(self.redshift_conn_id)
+        redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
+        self.log.info("executing Data Quality query")
         # query COUNT(*)
-        records = redshift_hook.get_records(f'SELECT COUNT(*) FROM {self.table}')
+        for table in self.table_names:
+            unformatted_sql = quality_checks[0]['check_sql'].format(table)
+            formatted_sql = unformatted_sql.format(table)
+            record_count = redshift_hook.get_records(formatted_sql)
+            # wrong method?  record_count = redshift_hook.run(formatted_sql)
+            # verify COUNT(*) > 0
+            if record_count < quality_checks[0]['fail_result']):
+                self.log.info("Data quality check failed. {} returned no results".format(table))
 
-        # verify COUNT(*) > 0
-        if len(records) < 1 or len(records[0]) < 1:
-            raise ValueError(f"Data quality check failed. {self.table} returned no results")
-        num_records = records[0][0]
-        if num_records < 1:
-            raise ValueError(f"Data quality check failed. {self.table} contained 0 rows")
-        logging.info(f"Data quality on table {self.table} check passed with {records[0][0]} records")
+        self.log.info("Data Quality check successfully completed.")
 
-        # checks if certain column contains NULL values
-        # by counting all the rows that have NULL in the column.
-        null_records = redshift_hook.get_records(f"""
-            SELECT COUNT(*) FROM {self.table}
-            WHERE {self.column} IS NULL
-        """)
-        num_null_records = null_records[0][0]
-        if num_null_records > 0:
-            raise ValueError(f"""Data quality check failed. {self.table} contained
-                            row(s) of NULL values in {self.column}""")
+            # wrong code?
+            # if (len(record_count) < quality_checks[0]['fail_result'] or len(record_count[0]) < quality_checks[0]['fail_result']):
+            #     self.log.info("Data quality check failed. {} returned no results".format(table))
