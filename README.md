@@ -1,5 +1,7 @@
 <img src="./img/air.png" alt="airflow logo" width="350" title="airflow logo" align="middle" />
 
+<img src="./img/s3.png" alt="Amazon S3" width="200" title="Amazon S3" align="right" />
+
 # Sparkify Data Pipeline
 using Apache Airflow, AWS Redshift and AWS S3
 
